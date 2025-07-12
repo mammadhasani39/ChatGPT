@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChatGPT</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Vazirmatn', sans-serif;
+      background: linear-gradient(to right, #3f87a6, #ebf8e1, #f69d3c);
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #222;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    p {
+      text-align: center;
+      font-size: 14px;
+      margin-top: -10px;
+    }
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 15px;
+      font-size: 16px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #0072ff, #00c6ff);
+    }
+
+    .answer {
+      margin-top: 20px;
+      background: #f0f9ff;
+      padding: 15px;
+      border-left: 5px solid #2196f3;
+      border-radius: 10px;
+      white-space: pre-wrap;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+      font-size: 16px;
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-size: 13px;
+      text-align: center;
+      color: #666;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      textarea {
+        min-height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>ChatGPT</h1>
+    <p>👨‍💻 Created by: <a href="https://t.me/mammadhasani39" target="_blank">mammadhasani39</a></p>
+
+    <textarea id="question" placeholder="Ask anythink"></textarea>
+    <button onclick="askGPT()">Send</button>
+
+    <div id="response" class="answer" style="display: none;"></div>
+
+    <div class="footer">
+       <a href="https://api.api-code.ir" target="_blank">Web Service: api.api-code.ir</a>
+    </div>
+  </div>
+
+  <script>
+    function askGPT() {
+      const question = document.getElementById("question").value.trim();
+      const responseDiv = document.getElementById("response");
+
+      if (!question) {
+        alert("⚠️ Please type a question");
+        return;
+      }
+
+      responseDiv.style.display = "block";
+      responseDiv.innerText = "⏳ Thinking...";
+
+      const encoded = encodeURIComponent(question);
+      const url = "https://api.api-code.ir/gpt-4o/?text=" + encoded;
+
+      fetch(url, {
+        method: "GET",
+        headers: {
+          "User-Agent": "Mozilla/5.0",
+          "Referer": "https://api.api-code.ir/",
+          "Origin": "https://api.api-code.ir"
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.result) {
+          responseDiv.innerText = "💬 Result:\n\n" + data.result;
+        } else {
+          responseDiv.innerText = "⚠️ Error when receiving answer:\n" + JSON.stringify(data);
+        }
+      })
+      .catch(err => {
+        responseDiv.innerText = "⚠️ Error when send request:\n" + err;
+      });
+    }
+  </script>
+
+</body>
+</html>
