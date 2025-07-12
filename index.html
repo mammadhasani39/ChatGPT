@@ -139,7 +139,7 @@
       .then(res => res.json())
       .then(data => {
         if (data.result) {
-          responseDiv.innerText = "data.result;
+          responseDiv.innerText = data.result;
         } else {
           responseDiv.innerText = "⚠️ Error when receiving answer:\n" + JSON.stringify(data);
         }
