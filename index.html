@@ -123,7 +123,7 @@
       }
 
       responseDiv.style.display = "block";
-      responseDiv.innerText = "⏳ Thinking...";
+      responseDiv.innerText = "Typing...";
 
       const encoded = encodeURIComponent(question);
       const url = "https://api.api-code.ir/gpt-4o/?text=" + encoded;
@@ -139,7 +139,7 @@
       .then(res => res.json())
       .then(data => {
         if (data.result) {
-          responseDiv.innerText = "💬 Result:\n\n" + data.result;
+          responseDiv.innerText = "data.result;
         } else {
           responseDiv.innerText = "⚠️ Error when receiving answer:\n" + JSON.stringify(data);
         }
