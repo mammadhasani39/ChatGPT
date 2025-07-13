@@ -186,7 +186,7 @@
     chatArea.prepend(botBubble); // ⬅️ Add to top (since it's reversed)
 
     const encoded = encodeURIComponent(question);
-    const url = "https://api.api-code.ir/gpt-4o/?text=Hi ChatGPT! Please respond as clearly, accurately, and helpfully as possible. Focus on high-quality, structured, and detailed answers. If there’s a better way to solve or explain something than what I asked, feel free to suggest it. Avoid unnecessary repetition or filler text. Write in fluent. At the end of your response, leave one empty line and then add this line exactly as shown: Creator : @mammadhasani39 . So here's my question for you: " + encoded;
+    const url = "https://api.api-code.ir/gpt-4o/?text=At the end of your response, leave one empty line and then add this line exactly as shown: Creator : @mammadhasani39 . So here's my question for you: " + encoded;
 
     fetch(url, {
       method: "GET",
