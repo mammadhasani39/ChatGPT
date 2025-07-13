@@ -14,6 +14,56 @@
       padding: 20px;
     }
 
+    #loader {
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #0d0d0d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      transition: opacity 1s ease, visibility 1s ease;
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .ring {
+      width: 80px;
+      height: 80px;
+      border: 10px solid #444;
+      border-top: 10px solid #00e5ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+      box-shadow: 0 0 15px #00e5ff;
+    }
+
+    .text {
+      color: #00e5ff;
+      font-size: 20px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+
     .container {
       background: #222;
       border-radius: 15px;
@@ -126,7 +176,6 @@
       50% { opacity: 1; }
     }
 
-    /* Styles for h3 (###) */
     .bot-bubble h3 {
       font-size: 18px;
       margin-top: 10px;
@@ -134,7 +183,6 @@
       color: #ffd54f;
     }
 
-    /* Styles for blockquotes */
     .bot-bubble q {
       quotes: "“" "”";
       color: #81d4fa;
@@ -143,6 +191,12 @@
   </style>
 </head>
 <body>
+
+<!-- Loading screen -->
+<div id="loader">
+  <div class="ring"></div>
+  <div class="text">Loading...</div>
+</div>
 
 <div class="container">
   <h1>ChatGPT</h1>
@@ -160,6 +214,14 @@
 </div>
 
 <script>
+  // hide loader after page fully loads
+  window.addEventListener("load", () => {
+    const loader = document.getElementById("loader");
+    setTimeout(() => {
+      loader.classList.add("hidden");
+    }, 1000);
+  });
+
   const chatArea = document.getElementById("chat-area");
   const questionInput = document.getElementById("question");
 
@@ -183,11 +245,11 @@
 
   function markdownToHTML(text) {
     return text
-      .replace(/### (.*)/g, '<h3>$1</h3>')              // h3 headers
-      .replace(/"([^"]+)"/g, '<q>$1</q>')               // quotes
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // bold
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')             // italic
-      .replace(/\n/g, '<br>');                           // line breaks
+      .replace(/### (.*)/g, '<h3>$1</h3>')
+      .replace(/"([^"]+)"/g, '<q>$1</q>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/\n/g, '<br>');
   }
 
   function typeText(target, htmlText, speed = 1) {
