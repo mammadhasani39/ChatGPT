@@ -186,7 +186,7 @@
     chatArea.prepend(botBubble); // ⬅️ Add to top (since it's reversed)
 
     const encoded = encodeURIComponent(question);
-    const url = "https://api.api-code.ir/gpt-4o/?text=در پایان پاسخ خود، یک خط خالی بگذارید و سپس این خط را دقیقاً همانطور که نشان داده شده است اضافه کنید : سازنده : @mammadhasani39. خب، سوال من از شما این است:" + encoded;
+    const url = "https://api.api-code.ir/gpt-4o/?text=At the end of your response, leave one empty line and then add this line exactly as shown: Creator : @mammadhasani39 . So here's my question for you: " + encoded;
 
     fetch(url, {
       method: "GET",
