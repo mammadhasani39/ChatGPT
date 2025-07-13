@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,73 +9,41 @@
     body {
       margin: 0;
       font-family: 'Vazirmatn', sans-serif;
-      background: #121212;
-      color: #ddd;
-      padding: 20px;
+      background: #222;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
     }
 
     .container {
-      background: #222;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.7);
-      padding: 20px;
-      max-width: 600px;
-      margin: auto;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      height: 80vh;
-    }
-
-    h1 {
-      font-size: 24px;
-      color: #ddd;
-      margin-bottom: 10px;
-      text-align: center;
+      flex: 1;
+      padding: 10px;
     }
 
     .chat-area {
-      flex-grow: 1;
+      flex: 1;
       overflow-y: auto;
-      margin-bottom: 20px;
+      padding: 10px;
       display: flex;
-      flex-direction: column-reverse;
-    }
-
-    .bubble {
-      max-width: 80%;
-      margin-bottom: 10px;
-      padding: 10px 15px;
-      border-radius: 20px;
-      font-size: 16px;
-      white-space: pre-wrap;
-      box-shadow: 0 1px 5px rgba(255,255,255,0.1);
-      position: relative;
-      color: #eee;
-    }
-
-    .user-bubble {
-      background-color: #355a9f;
-      align-self: flex-end;
-      border-bottom-right-radius: 0;
-      text-align: right;
-    }
-
-    .bot-bubble {
-      background-color: #2b3e55;
-      align-self: flex-start;
-      border-bottom-left-radius: 0;
-      border-left: 5px solid #81c784;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .input-area {
-      margin-top: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
     }
 
     .input-wrapper {
       display: flex;
-      align-items: center;
+      flex: 1;
       gap: 10px;
+      align-items: center;
     }
 
     textarea {
@@ -110,7 +78,7 @@
       width: 24px;
       height: 24px;
       object-fit: contain;
-      filter: brightness(0) invert(1); /* سفید کردن آیکن داخل دکمه */
+      filter: brightness(0) invert(1);
     }
 
     .timestamp {
@@ -121,127 +89,74 @@
       user-select: none;
     }
 
-    .typing-dots {
-      display: inline-flex;
-      gap: 5px;
-      height: 10px;
-      font-size: 0;
-      line-height: 0;
+    .typing-indicator {
+      font-size: 14px;
+      color: #ccc;
+      opacity: 0;
+      animation: blinkText 1.2s infinite ease-in-out;
+      transition: opacity 0.3s;
+      margin-top: 10px;
     }
 
-    .typing-dots span {
-      width: 8px;
-      height: 8px;
-      background-color: #ccc;
-      border-radius: 50%;
-      opacity: 0.3;
-      animation: blinkDots 1.2s infinite ease-in-out;
-    }
-
-    .typing-dots span:nth-child(1) { animation-delay: 0s; }
-    .typing-dots span:nth-child(2) { animation-delay: 0.3s; }
-    .typing-dots span:nth-child(3) { animation-delay: 0.6s; }
-
-    @keyframes blinkDots {
-      0%, 80%, 100% { opacity: 0.3; }
+    @keyframes blinkText {
+      0%, 80%, 100% { opacity: 0; }
       40% { opacity: 1; }
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>ChatGPT</h1>
+  <div class="container">
+    <h1>ChatGPT</h1>
 
-  <div class="chat-area" id="chat-area"></div>
+    <div class="chat-area" id="chat-area"></div>
 
-  <div class="input-area">
-    <div class="input-wrapper">
-      <textarea id="question" placeholder="Ask anything"></textarea>
-      <button onclick="askGPT()" class="send-button">
-        <img src="send.png" alt="Send" />
-      </button>
+    <div id="typing" class="typing-indicator" style="display: none;">Typing...</div>
+
+    <div class="input-area">
+      <div class="input-wrapper">
+        <textarea id="question" placeholder="Ask anything"></textarea>
+        <button onclick="askGPT()" class="send-button">
+          <img src="send.png" alt="Send" />
+        </button>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-  const chatArea = document.getElementById("chat-area");
-  const questionInput = document.getElementById("question");
-
-  function createBubble(className) {
-    const bubble = document.createElement("div");
-    bubble.className = `bubble ${className}`;
-
-    const msgText = document.createElement("div");
-    bubble.appendChild(msgText);
-
-    const timeSpan = document.createElement("div");
-    const now = new Date();
-    timeSpan.className = "timestamp";
-    timeSpan.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    bubble.appendChild(timeSpan);
-
-    return { bubble, msgText };
-  }
-
-  function typeText(target, text, speed = 15) {
-    let index = 0;
-    return new Promise(resolve => {
-      function typeChar() {
-        if (index < text.length) {
-          target.textContent += text.charAt(index++);
-          chatArea.scrollTop = 0;
-          setTimeout(typeChar, speed);
-        } else {
-          resolve();
-        }
-      }
-      typeChar();
-    });
-  }
-
-  async function askGPT() {
-    const question = questionInput.value.trim();
-    if (!question) {
-      alert("⚠️ Please type your question");
-      return;
+  <script>
+    function showTyping() {
+      document.getElementById("typing").style.display = "block";
     }
 
-    const { bubble: userBubble, msgText: userText } = createBubble("user-bubble");
-    userText.textContent = question;
-    chatArea.prepend(userBubble);
-    questionInput.value = "";
+    function hideTyping() {
+      document.getElementById("typing").style.display = "none";
+    }
 
-    const { bubble: botBubble, msgText: botText } = createBubble("bot-bubble");
-    botText.innerHTML = `
-      <div class="typing-dots">
-        <span></span><span></span><span></span>
-      </div>
-    `;
-    chatArea.prepend(botBubble);
+    function askGPT() {
+      const question = document.getElementById("question").value.trim();
+      if (!question) return;
 
-    const encoded = encodeURIComponent(question);
-    const url = "https://api.api-code.ir/gpt-4o/?text=At the end of your response, leave one empty line and then add this line exactly as shown: Creator : @mammadhasani39 . So here's my question for you: " + encoded;
+      const chatArea = document.getElementById("chat-area");
 
-    fetch(url, {
-      method: "GET",
-      headers: {
-        "User-Agent": "Mozilla/5.0",
-        "Referer": "https://api.api-code.ir/",
-        "Origin": "https://api.api-code.ir"
-      }
-    })
-    .then(res => res.json())
-    .then(async data => {
-      botText.innerHTML = "";
-      await typeText(botText, data.result || "⚠️ No response received.");
-    })
-    .catch(err => {
-      botText.innerHTML = "⚠️ Error:\n" + err;
-    });
-  }
-</script>
+      // نمایش پیام کاربر
+      const userMessage = document.createElement("div");
+      userMessage.textContent = "🧑: " + question;
+      chatArea.appendChild(userMessage);
+
+      document.getElementById("question").value = "";
+      showTyping();
+
+      // شبیه‌سازی پاسخ با تأخیر
+      setTimeout(() => {
+        const aiMessage = document.createElement("div");
+        aiMessage.textContent = "🤖: This is a simulated response.";
+        chatArea.appendChild(aiMessage);
+
+        hideTyping();
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }, 2000);
+    }
+  </script>
 
 </body>
 </html>
