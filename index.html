@@ -94,8 +94,6 @@
     .send-button {
       width: 50px;
       height: 50px;
-      min-width: 50px;
-      min-height: 50px;
       border-radius: 50%;
       border: none;
       background: #4caf50;
@@ -104,8 +102,6 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      transition: background 0.3s ease;
-      padding: 0;
     }
 
     .send-button img {
@@ -129,6 +125,21 @@
       0%, 100% { opacity: 0.2; }
       50% { opacity: 1; }
     }
+
+    /* Styles for h3 (###) */
+    .bot-bubble h3 {
+      font-size: 18px;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      color: #ffd54f;
+    }
+
+    /* Styles for blockquotes */
+    .bot-bubble q {
+      quotes: "“" "”";
+      color: #81d4fa;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -141,7 +152,7 @@
   <div class="input-area">
     <div class="input-wrapper">
       <textarea id="question" placeholder="Ask anything"></textarea>
-      <button onclick="askGPT()" class="send-button">
+      <button onclick="askGPT()" class="send-button" aria-label="Send message">
         <img src="send.png" alt="Send" />
       </button>
     </div>
@@ -151,6 +162,8 @@
 <script>
   const chatArea = document.getElementById("chat-area");
   const questionInput = document.getElementById("question");
+
+  let fullConversation = [];
 
   function createBubble(className) {
     const bubble = document.createElement("div");
@@ -168,26 +181,38 @@
     return { bubble, msgText };
   }
 
-  function typeText(target, text, speed = 15) {
+  function markdownToHTML(text) {
+    return text
+      .replace(/### (.*)/g, '<h3>$1</h3>')              // h3 headers
+      .replace(/"([^"]+)"/g, '<q>$1</q>')               // quotes
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // bold
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')             // italic
+      .replace(/\n/g, '<br>');                           // line breaks
+  }
+
+  function typeText(target, htmlText, speed = 1) {
+    let formatted = markdownToHTML(htmlText);
     let index = 0;
-    return new Promise(resolve => {
-      function typeChar() {
-        if (index < text.length) {
-          target.textContent += text.charAt(index++);
-          chatArea.scrollTop = 0;
-          setTimeout(typeChar, speed);
-        } else {
-          resolve();
-        }
+    target.innerHTML = "";
+
+    function typeChar() {
+      if (index <= formatted.length) {
+        target.innerHTML = formatted.slice(0, index++);
+        chatArea.scrollTop = 0;
+        setTimeout(typeChar, speed);
       }
+    }
+
+    return new Promise(resolve => {
       typeChar();
+      setTimeout(resolve, formatted.length * speed + 100);
     });
   }
 
   async function askGPT() {
     const question = questionInput.value.trim();
     if (!question) {
-      alert("⚠️ Please type your question");
+      alert("⚠️ Please enter a question");
       return;
     }
 
@@ -197,11 +222,13 @@
     questionInput.value = "";
 
     const { bubble: botBubble, msgText: botText } = createBubble("bot-bubble");
-    botText.textContent = "Typing...";
+    botText.innerHTML = "Typing...";
     botText.classList.add("blinking");
     chatArea.prepend(botBubble);
 
-    const encoded = encodeURIComponent(question);
+    fullConversation.push("User: " + question);
+    const prompt = fullConversation.join("\n") + "\nBot:";
+    const encoded = encodeURIComponent(prompt);
     const url = "https://api.api-code.ir/gpt-4o/?text=" + encoded;
 
     fetch(url, {
@@ -215,12 +242,14 @@
     .then(res => res.json())
     .then(data => {
       botText.classList.remove("blinking");
-      botText.textContent = "";
-      typeText(botText, data.result || "⚠️ No response received.");
+      botText.innerHTML = "";
+      const response = data.result || "⚠️ No response received.";
+      fullConversation.push("Bot: " + response);
+      typeText(botText, response);
     })
     .catch(err => {
       botText.classList.remove("blinking");
-      botText.textContent = "⚠️ Error:\n" + err;
+      botText.innerHTML = "⚠️ Error:\n" + err;
     });
   }
 </script>
