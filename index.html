@@ -202,7 +202,7 @@
     chatArea.prepend(botBubble);
 
     const encoded = encodeURIComponent(question);
-    const url = "https://api.api-code.ir/gpt-4o/?text=At the end of your response, leave one empty line and then add this line exactly as shown: Creator : @mammadhasani39 . So here's my question for you: " + encoded;
+    const url = "https://api.api-code.ir/gpt-4o/?text=" + encoded;
 
     fetch(url, {
       method: "GET",
