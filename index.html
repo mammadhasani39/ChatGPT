@@ -188,11 +188,15 @@
       color: #81d4fa;
       font-style: italic;
     }
+
+    .rtl {
+      direction: rtl;
+      text-align: right;
+    }
   </style>
 </head>
 <body>
 
-<!-- Loading screen -->
 <div id="loader">
   <div class="ring"></div>
   <div class="text">Loading...</div>
@@ -200,9 +204,7 @@
 
 <div class="container">
   <h1>ChatGPT</h1>
-
   <div class="chat-area" id="chat-area"></div>
-
   <div class="input-area">
     <div class="input-wrapper">
       <textarea id="question" placeholder="Ask anything"></textarea>
@@ -214,7 +216,6 @@
 </div>
 
 <script>
-  // hide loader after page fully loads
   window.addEventListener("load", () => {
     const loader = document.getElementById("loader");
     setTimeout(() => {
@@ -307,6 +308,12 @@
       botText.innerHTML = "";
       const response = data.result || "⚠️ No response received.";
       fullConversation.push("Bot: " + response);
+
+      const firstWord = response.trim().split(/\s+/)[0];
+      if (/[\u0600-\u06FF]/.test(firstWord)) {
+        botText.classList.add("rtl");
+      }
+
       typeText(botText, response);
     })
     .catch(err => {
