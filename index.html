@@ -151,12 +151,12 @@
       text-align: right;
     }
 
-    /* بخش ورودی پیام (کد 2) */
+    /* بخش ورودی پیام */
     .input-area {
       border-top: 1px solid #555;
       padding: 16px;
       background: #343541;
-      margin: 0 -20px -20px -20px; /* جبران padding بدنه */
+      margin: 0 -20px -20px -20px;
       border-radius: 0 0 15px 15px;
     }
 
@@ -181,6 +181,8 @@
       overflow-y: auto;
       outline: none;
       font-family: 'Vazirmatn', sans-serif;
+      direction: ltr;
+      text-align: left;
     }
 
     .send-button {
@@ -313,11 +315,13 @@
       botText.classList.remove("blinking");
       botText.innerHTML = "";
       const response = data.result || "⚠️ No response received.";
-      fullConversation.push("Bot: " + response);
+      fullConversation.push(response);
 
       const firstWord = response.trim().split(/\s+/)[0];
       if (/[\u0600-\u06FF]/.test(firstWord)) {
         botText.classList.add("rtl");
+      } else {
+        botText.classList.remove("rtl");
       }
 
       typeText(botText, response);
