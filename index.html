@@ -185,7 +185,7 @@
     const timeSpan = document.createElement("div");
     const now = new Date();
     timeSpan.className = "timestamp";
-    timeSpan.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    timeSpan.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
     bubble.appendChild(timeSpan);
 
     return { bubble, msgText };
