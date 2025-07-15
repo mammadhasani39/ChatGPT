@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,54 +12,6 @@
       background: #121212;
       color: #ddd;
       padding: 20px;
-    }
-
-    #loader {
-      position: fixed;
-      z-index: 9999;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #0d0d0d;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      transition: opacity 1s ease, visibility 1s ease;
-    }
-
-    #loader.hidden {
-      opacity: 0;
-      visibility: hidden;
-    }
-
-    .ring {
-      width: 70px;
-      height: 70px;
-      border: 8px solid #555;
-      border-top: 8px solid #00e5ff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 20px;
-      box-shadow: 0 0 15px #00e5ff;
-    }
-
-    .text {
-      color: #00e5ff;
-      font-size: 18px;
-      font-weight: bold;
-      animation: pulse 1.2s infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.4; }
-      50% { opacity: 1; }
     }
 
     .container {
@@ -105,22 +57,22 @@
     .user-bubble {
       background-color: #355a9f;
       align-self: flex-end;
-      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
       text-align: right;
     }
 
     .bot-bubble {
       background-color: #2b3e55;
       align-self: flex-start;
-      border-bottom-left-radius: 0;
-      border-left: 5px solid #90caf9;
+      border-bottom-right-radius: 0;
+      border-right: 5px solid #90caf9;
     }
 
     .timestamp {
       font-size: 11px;
       color: #bbb;
       margin-top: 4px;
-      text-align: right;
+      text-align: left;
       user-select: none;
     }
 
@@ -141,7 +93,7 @@
     }
 
     .bot-bubble q {
-      quotes: "“" "”";
+      quotes: "«" "»";
       color: #81d4fa;
       font-style: italic;
     }
@@ -151,7 +103,6 @@
       text-align: right;
     }
 
-    /* بخش ورودی پیام */
     .input-area {
       border-top: 1px solid #555;
       padding: 16px;
@@ -181,8 +132,8 @@
       overflow-y: auto;
       outline: none;
       font-family: 'Vazirmatn', sans-serif;
-      direction: ltr;
-      text-align: left;
+      direction: rtl;
+      text-align: right;
     }
 
     .send-button {
@@ -199,38 +150,27 @@
       width: 24px;
       height: 24px;
       filter: invert(1);
+      transform: scaleX(-1);
     }
   </style>
 </head>
 <body>
 
-<div id="loader">
-  <div class="ring"></div>
-  <div class="text">Loading...</div>
-</div>
-
 <div class="container">
-  <h1>ChatGPT</h1>
+  <h1>چت جی پی تی</h1>
   <div class="chat-area" id="chat-area"></div>
 
   <div class="input-area">
     <div class="input-wrapper">
-      <textarea id="question" placeholder="Ask anything..."></textarea>
-      <button onclick="askGPT()" class="send-button" aria-label="Send">
-        <img src="send.png" alt="Send" />
+      <textarea id="question" placeholder="سوالتو بپرس..."></textarea>
+      <button onclick="askGPT()" class="send-button" aria-label="">
+        <img src="send.png" alt="" />
       </button>
     </div>
   </div>
 </div>
 
 <script>
-  window.addEventListener("load", () => {
-    const loader = document.getElementById("loader");
-    setTimeout(() => {
-      loader.classList.add("hidden");
-    }, 1000);
-  });
-
   const chatArea = document.getElementById("chat-area");
   const questionInput = document.getElementById("question");
 
@@ -283,7 +223,7 @@
   async function askGPT() {
     const question = questionInput.value.trim();
     if (!question) {
-      alert("⚠️ Please enter a question");
+      alert("⚠️ لطفاً یک سوال وارد کنید");
       return;
     }
 
@@ -293,12 +233,12 @@
     questionInput.value = "";
 
     const { bubble: botBubble, msgText: botText } = createBubble("bot-bubble");
-    botText.innerHTML = "Typing...";
+    botText.innerHTML = "در حال نوشتن...";
     botText.classList.add("blinking");
     chatArea.prepend(botBubble);
 
-    fullConversation.push("User: " + question);
-    const prompt = fullConversation.join("\n") + "\nBot:";
+    fullConversation.push("کاربر: " + question);
+    const prompt = fullConversation.join("\n") + "\nبات:";
     const encoded = encodeURIComponent(prompt);
     const url = "https://api.api-code.ir/gpt-4o/?text=" + encoded;
 
@@ -314,8 +254,8 @@
     .then(data => {
       botText.classList.remove("blinking");
       botText.innerHTML = "";
-      const response = data.result || "⚠️ No response received.";
-      fullConversation.push(response);
+      const response = data.result || "⚠️ پاسخی دریافت نشد.";
+      fullConversation.push("بات: " + response);
 
       const firstWord = response.trim().split(/\s+/)[0];
       if (/[\u0600-\u06FF]/.test(firstWord)) {
@@ -328,7 +268,7 @@
     })
     .catch(err => {
       botText.classList.remove("blinking");
-      botText.innerHTML = "⚠️ Error:\n" + err;
+      botText.innerHTML = "⚠️ خطا:\n" + err;
     });
   }
 
